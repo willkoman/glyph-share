@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "TEAMID.com.willkostudios.glyph"
+        ],
+        "components": [
+          {
+            "/": "/share*",
+            "comment": "Glyph share links"
+          }
+        ]
+      }
+    ]
+  }
+}

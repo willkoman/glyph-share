@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glyph — Import Shared Widget</title>
+
+<!-- Open Graph for iMessage / social previews -->
+<meta property="og:title" content="Glyph — Shared Widget">
+<meta property="og:description" content="Tap to import this glyph into your collection.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://willkostudios.github.io/glyph-share/og-image.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Glyph — Shared Widget">
+<meta name="twitter:description" content="Tap to import this glyph into your collection.">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    background: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 24px;
+  }
+  .card {
+    text-align: center;
+    max-width: 360px;
+    width: 100%;
+  }
+  .icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #007AFF, #5856D6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 36px;
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 28px;
+    line-height: 1.4;
+  }
+  .btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: #007AFF;
+    color: #fff;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .btn:active { opacity: 0.7; }
+  .fallback {
+    margin-top: 16px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+  }
+  .fallback a { color: rgba(255,255,255,0.6); }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="icon">✦</div>
+  <h1>Shared Glyph</h1>
+  <p>Someone shared a glyph widget with you. Tap below to add it to your collection.</p>
+  <a id="open-btn" class="btn" href="#">Open in Glyph</a>
+  <div class="fallback">
+    Don't have the app? <a href="https://apps.apple.com/app/id0000000000">Get Glyph</a>
+  </div>
+</div>
+
+<script>
+(function() {
+  // The payload is in the URL fragment: /share#PAYLOAD
+  var payload = window.location.hash.substring(1);
+  if (!payload) return;
+
+  // Build the custom URL scheme link
+  var appURL = 'glyph://import/' + payload;
+  var btn = document.getElementById('open-btn');
+  btn.href = appURL;
+
+  // Try to decode the payload to show glyph name in the page
+  try {
+    var b64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    var pad = b64.length % 4;
+    if (pad) b64 += '==='.substring(0, 4 - pad);
+
+    var raw = atob(b64);
+    var bytes = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+
+    if (typeof DecompressionStream !== 'undefined') {
+      var ds = new DecompressionStream('deflate');
+      var writer = ds.writable.getWriter();
+      var reader = ds.readable.getReader();
+      var chunks = [];
+
+      reader.read().then(function pump(result) {
+        if (result.done) {
+          var total = chunks.reduce(function(a, c) { return a + c.length; }, 0);
+          var merged = new Uint8Array(total);
+          var offset = 0;
+          chunks.forEach(function(c) { merged.set(c, offset); offset += c.length; });
+          var json = new TextDecoder().decode(merged);
+          var pkg = JSON.parse(json);
+          updateUI(pkg);
+          return;
+        }
+        chunks.push(result.value);
+        return reader.read().then(pump);
+      });
+
+      writer.write(bytes);
+      writer.close();
+    }
+  } catch(e) {}
+
+  function updateUI(pkg) {
+    if (pkg.glyphs && pkg.glyphs.length > 0) {
+      var name = pkg.glyphs[0].title || 'Shared Glyph';
+      var count = pkg.glyphs.length;
+      document.querySelector('h1').textContent = count > 1
+        ? count + ' Shared Glyphs'
+        : name;
+      if (pkg.homeWidget) {
+        document.querySelector('p').textContent =
+          'Includes ' + count + ' glyph' + (count > 1 ? 's' : '') +
+          ' and a home screen widget. Tap below to import.';
+      } else {
+        document.querySelector('p').textContent =
+          'Tap below to add ' + (count > 1 ? 'these glyphs' : 'this glyph') +
+          ' to your collection.';
+      }
+    }
+  }
+
+  // Auto-redirect on mobile
+  if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+    window.location.href = appURL;
+  }
+})();
+</script>
+
+</body>
+</html>
