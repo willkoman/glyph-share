@@ -3,103 +3,267 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Glyph — Import Shared Widget</title>
+<title>Glyph — Shared Widget</title>
 
 <!-- Open Graph for iMessage / social previews -->
 <meta property="og:title" content="Glyph — Shared Widget">
-<meta property="og:description" content="Tap to import this glyph into your collection.">
+<meta property="og:description" content="Someone shared a glyph with you. Tap to import it into your collection.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://glyph.willko.dev/og-image.png">
+<meta property="og:image" content="https://glyph.willko.dev/og-image.svg">
+<meta property="og:url" content="https://glyph.willko.dev/share">
 
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Glyph — Shared Widget">
-<meta name="twitter:description" content="Tap to import this glyph into your collection.">
+<meta name="twitter:description" content="Someone shared a glyph with you. Tap to import it into your collection.">
+<meta name="twitter:image" content="https://glyph.willko.dev/og-image.svg">
 
 <style>
+  :root {
+    --accent: #007AFF;
+    --accent-secondary: #5856D6;
+    --bg: #000;
+    --surface: rgba(255,255,255,0.06);
+    --surface-border: rgba(255,255,255,0.08);
+    --text: #fff;
+    --text-secondary: rgba(255,255,255,0.55);
+    --text-tertiary: rgba(255,255,255,0.35);
+    --radius: 20px;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    background: #000;
-    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100dvh;
     padding: 24px;
+    -webkit-font-smoothing: antialiased;
   }
+
+  /* Subtle gradient background glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,122,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .card {
+    position: relative;
+    z-index: 1;
     text-align: center;
-    max-width: 360px;
+    max-width: 380px;
     width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius);
+    padding: 40px 28px 32px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
-  .icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #007AFF, #5856D6);
+
+  .icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 20px;
-    font-size: 36px;
+    box-shadow: 0 8px 32px rgba(0,122,255,0.25);
   }
+
+  .icon-wrap svg {
+    width: 32px;
+    height: 32px;
+    fill: #fff;
+  }
+
   h1 {
     font-size: 22px;
     font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+    line-height: 1.2;
   }
-  p {
+
+  .subtitle {
     font-size: 15px;
-    color: rgba(255,255,255,0.6);
-    margin-bottom: 28px;
-    line-height: 1.4;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin-bottom: 8px;
   }
+
+  /* Glyph detail chips */
+  .details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .chip {
+    display: none; /* shown by JS when data is decoded */
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    color: var(--text-secondary);
+  }
+
+  .chip.visible { display: inline-flex; align-items: center; gap: 4px; }
+  .chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
   .btn {
     display: inline-block;
-    padding: 14px 32px;
-    background: #007AFF;
+    width: 100%;
+    padding: 15px 28px;
+    background: var(--accent);
     color: #fff;
     border-radius: 14px;
     font-size: 17px;
     font-weight: 600;
     text-decoration: none;
-    transition: opacity 0.15s;
+    letter-spacing: -0.01em;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
   }
-  .btn:active { opacity: 0.7; }
-  .fallback {
+
+  .btn:hover { opacity: 0.92; }
+  .btn:active { transform: scale(0.97); opacity: 0.85; }
+
+  .footer {
     margin-top: 16px;
     font-size: 13px;
-    color: rgba(255,255,255,0.4);
+    color: var(--text-tertiary);
+    line-height: 1.5;
   }
-  .fallback a { color: rgba(255,255,255,0.6); }
+
+  .footer a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-decoration-color: rgba(255,255,255,0.2);
+    text-underline-offset: 2px;
+  }
+
+  .branding {
+    position: relative;
+    z-index: 1;
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Loading state */
+  .spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  .spinner.visible { display: block; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Fade-in animation */
+  .card {
+    animation: fadeUp 0.4s ease-out;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
 
 <div class="card">
-  <div class="icon">✦</div>
-  <h1>Shared Glyph</h1>
-  <p>Someone shared a glyph widget with you. Tap below to add it to your collection.</p>
+  <div class="icon-wrap">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+    </svg>
+  </div>
+
+  <h1 id="title">Shared Glyph</h1>
+  <p id="desc" class="subtitle">Someone shared a glyph with you.<br>Tap below to add it to your collection.</p>
+
+  <div class="details">
+    <span id="chip-color" class="chip"><span class="dot"></span><span class="chip-label"></span></span>
+    <span id="chip-type" class="chip"></span>
+    <span id="chip-count" class="chip"></span>
+    <span id="chip-widget" class="chip"></span>
+  </div>
+
+  <div id="loading" class="spinner"></div>
+
   <a id="open-btn" class="btn" href="#">Open in Glyph</a>
-  <div class="fallback">
-    Don't have the app? <a href="https://apps.apple.com/app/id0000000000">Get Glyph</a>
+
+  <div class="footer">
+    Don't have the app?<br>
+    <a href="https://apps.apple.com/app/id0000000000">Download Glyph from the App Store</a>
   </div>
 </div>
 
+<div class="branding">Glyph</div>
+
 <script>
 (function() {
-  // The payload is in the URL fragment: /share#PAYLOAD
+  var params = new URLSearchParams(window.location.search);
+  var cloudID = params.get('id');
   var payload = window.location.hash.substring(1);
+  var btn = document.getElementById('open-btn');
+
+  // Route 1: CloudKit share (?id=<shareID>)
+  if (cloudID) {
+    var appURL = 'glyph://import-cloud/' + cloudID;
+    btn.href = appURL;
+    document.getElementById('title').textContent = 'Shared Glyph';
+    document.getElementById('desc').innerHTML =
+      'Someone shared a glyph via the cloud.<br>Tap below to import it.';
+
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+      window.location.href = appURL;
+    }
+    return;
+  }
+
+  // Route 2: URL-encoded payload (#PAYLOAD)
   if (!payload) return;
 
-  // Build the custom URL scheme link
   var appURL = 'glyph://import/' + payload;
-  var btn = document.getElementById('open-btn');
   btn.href = appURL;
 
-  // Try to decode the payload to show glyph name in the page
+  // Try to decode the payload to show details
   try {
     var b64 = payload.replace(/-/g, '+').replace(/_/g, '/');
     var pad = b64.length % 4;
@@ -110,6 +274,8 @@
     for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
 
     if (typeof DecompressionStream !== 'undefined') {
+      document.getElementById('loading').classList.add('visible');
+
       var ds = new DecompressionStream('deflate');
       var writer = ds.writable.getWriter();
       var reader = ds.readable.getReader();
@@ -123,6 +289,7 @@
           chunks.forEach(function(c) { merged.set(c, offset); offset += c.length; });
           var json = new TextDecoder().decode(merged);
           var pkg = JSON.parse(json);
+          document.getElementById('loading').classList.remove('visible');
           updateUI(pkg);
           return;
         }
@@ -133,28 +300,76 @@
       writer.write(bytes);
       writer.close();
     }
-  } catch(e) {}
+  } catch(e) {
+    document.getElementById('loading').classList.remove('visible');
+  }
 
   function updateUI(pkg) {
-    if (pkg.glyphs && pkg.glyphs.length > 0) {
-      var name = pkg.glyphs[0].title || 'Shared Glyph';
-      var count = pkg.glyphs.length;
-      document.querySelector('h1').textContent = count > 1
-        ? count + ' Shared Glyphs'
-        : name;
-      if (pkg.homeWidget) {
-        document.querySelector('p').textContent =
-          'Includes ' + count + ' glyph' + (count > 1 ? 's' : '') +
-          ' and a home screen widget. Tap below to import.';
-      } else {
-        document.querySelector('p').textContent =
-          'Tap below to add ' + (count > 1 ? 'these glyphs' : 'this glyph') +
-          ' to your collection.';
-      }
+    if (!pkg.glyphs || pkg.glyphs.length === 0) return;
+
+    var glyph = pkg.glyphs[0];
+    var count = pkg.glyphs.length;
+    var title = document.getElementById('title');
+    var desc = document.getElementById('desc');
+
+    // Title
+    if (pkg.homeWidget) {
+      title.textContent = pkg.homeWidget.title || 'Shared Widget';
+    } else if (count > 1) {
+      title.textContent = count + ' Shared Glyphs';
+    } else {
+      title.textContent = glyph.title || 'Shared Glyph';
+    }
+
+    // Description
+    if (pkg.homeWidget) {
+      desc.innerHTML = 'Includes ' + count + ' glyph' + (count > 1 ? 's' : '') +
+        ' and a home screen widget.<br>Tap below to import everything.';
+    } else if (count > 1) {
+      desc.innerHTML = 'Someone shared ' + count + ' glyphs with you.<br>Tap below to add them to your collection.';
+    } else {
+      desc.innerHTML = 'Someone shared <strong>' + escapeHTML(glyph.title) + '</strong> with you.<br>Tap below to add it to your collection.';
+    }
+
+    // Color chip
+    if (glyph.colorHex) {
+      var chipColor = document.getElementById('chip-color');
+      chipColor.querySelector('.dot').style.background = glyph.colorHex;
+      chipColor.querySelector('.chip-label').textContent = glyph.colorHex;
+      chipColor.classList.add('visible');
+    }
+
+    // Type chip
+    var typeNames = { circular: 'Lock Screen', rectangular: 'Rectangular', inline: 'Inline', controlCenter: 'Control Center' };
+    if (glyph.type) {
+      var chipType = document.getElementById('chip-type');
+      chipType.textContent = typeNames[glyph.type] || glyph.type;
+      chipType.classList.add('visible');
+    }
+
+    // Count chip (only if multiple)
+    if (count > 1) {
+      var chipCount = document.getElementById('chip-count');
+      chipCount.textContent = count + ' glyphs';
+      chipCount.classList.add('visible');
+    }
+
+    // Widget chip
+    if (pkg.homeWidget) {
+      var chipWidget = document.getElementById('chip-widget');
+      var sizeLabel = (pkg.homeWidget.size || 'medium').charAt(0).toUpperCase() + (pkg.homeWidget.size || 'medium').slice(1);
+      chipWidget.textContent = sizeLabel + ' Widget';
+      chipWidget.classList.add('visible');
     }
   }
 
-  // Auto-redirect on mobile
+  function escapeHTML(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // Auto-redirect on iOS
   if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
     window.location.href = appURL;
   }

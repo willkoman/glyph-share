@@ -1,13 +1,51 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#007AFF"/>
-      <stop offset="100%" style="stop-color:#5856D6"/>
+      <stop offset="0%" stop-color="#007AFF"/>
+      <stop offset="100%" stop-color="#5856D6"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#007AFF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
     </linearGradient>
   </defs>
+
+  <!-- Background -->
   <rect width="1200" height="630" fill="#000"/>
-  <rect x="490" y="165" width="120" height="120" rx="28" fill="url(#bg)"/>
-  <text x="550" y="240" text-anchor="middle" fill="white" font-size="56" font-family="-apple-system, sans-serif">✦</text>
-  <text x="600" y="360" text-anchor="middle" fill="white" font-size="42" font-weight="700" font-family="-apple-system, SF Pro Display, sans-serif">Shared Glyph</text>
-  <text x="600" y="405" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="22" font-family="-apple-system, SF Pro Display, sans-serif">Tap to import into your collection</text>
+
+  <!-- Subtle top glow -->
+  <ellipse cx="600" cy="0" rx="500" ry="350" fill="url(#glow)"/>
+
+  <!-- App icon -->
+  <rect x="540" y="140" width="120" height="120" rx="28" fill="url(#bg)"/>
+  <!-- Star glyph inside icon -->
+  <path d="M600 165 L610.9 191.3 L639 194.5 L618.5 213.9 L623.6 241.5 L600 229.4 L576.4 241.5 L581.5 213.9 L561 194.5 L589.1 191.3 Z" fill="#fff"/>
+
+  <!-- App name -->
+  <text x="600" y="325" text-anchor="middle" fill="#fff" font-size="48" font-weight="800" font-family="-apple-system, SF Pro Display, system-ui, sans-serif" letter-spacing="-1.5">Glyph</text>
+
+  <!-- Tagline -->
+  <text x="600" y="370" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="21" font-weight="500" font-family="-apple-system, SF Pro Text, system-ui, sans-serif">Custom Widgets for iOS</text>
+
+  <!-- Feature pills row -->
+  <g font-family="-apple-system, SF Pro Text, system-ui, sans-serif" font-size="14" font-weight="600">
+    <!-- Lock Screen -->
+    <rect x="295" y="400" width="130" height="32" rx="10" fill="rgba(255,255,255,0.08)"/>
+    <text x="360" y="421" text-anchor="middle" fill="rgba(255,255,255,0.5)">Lock Screen</text>
+
+    <!-- Progress Tracking -->
+    <rect x="437" y="400" width="145" height="32" rx="10" fill="rgba(255,255,255,0.08)"/>
+    <text x="509.5" y="421" text-anchor="middle" fill="rgba(255,255,255,0.5)">Progress Tracking</text>
+
+    <!-- Apple Health -->
+    <rect x="594" y="400" width="120" height="32" rx="10" fill="rgba(255,255,255,0.08)"/>
+    <text x="654" y="421" text-anchor="middle" fill="rgba(255,255,255,0.5)">Apple Health</text>
+
+    <!-- Share & Import -->
+    <rect x="726" y="400" width="130" height="32" rx="10" fill="rgba(255,255,255,0.08)"/>
+    <text x="791" y="421" text-anchor="middle" fill="rgba(255,255,255,0.5)">Share &amp; Import</text>
+  </g>
+
+  <!-- Bottom domain -->
+  <text x="600" y="520" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="16" font-weight="600" font-family="-apple-system, SF Pro Text, system-ui, sans-serif" letter-spacing="2">glyph.willko.dev</text>
 </svg>

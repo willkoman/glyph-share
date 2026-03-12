@@ -3,168 +3,193 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Glyph — Import Shared Widget</title>
+<title>Glyph — Custom Widgets for iOS</title>
 
-<!-- Open Graph for iMessage / social previews -->
-<meta property="og:title" content="Glyph — Shared Widget">
-<meta property="og:description" content="Tap to import this glyph into your collection.">
+<!-- Open Graph -->
+<meta property="og:title" content="Glyph — Custom Widgets for iOS">
+<meta property="og:description" content="Create beautiful, trackable widget glyphs for your Lock Screen, Home Screen, and Control Center.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://glyph.willko.dev/og-image.png">
+<meta property="og:image" content="https://glyph.willko.dev/og-image.svg">
+<meta property="og:url" content="https://glyph.willko.dev">
 
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Glyph — Shared Widget">
-<meta name="twitter:description" content="Tap to import this glyph into your collection.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Glyph — Custom Widgets for iOS">
+<meta name="twitter:description" content="Create beautiful, trackable widget glyphs for your Lock Screen, Home Screen, and Control Center.">
+<meta name="twitter:image" content="https://glyph.willko.dev/og-image.svg">
 
 <style>
+  :root {
+    --accent: #007AFF;
+    --accent-secondary: #5856D6;
+    --bg: #000;
+    --surface: rgba(255,255,255,0.06);
+    --surface-border: rgba(255,255,255,0.08);
+    --text: #fff;
+    --text-secondary: rgba(255,255,255,0.55);
+    --text-tertiary: rgba(255,255,255,0.35);
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    background: #000;
-    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100dvh;
     padding: 24px;
+    -webkit-font-smoothing: antialiased;
   }
-  .card {
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(0,122,255,0.1) 0%, rgba(88,86,214,0.05) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero {
+    position: relative;
+    z-index: 1;
     text-align: center;
-    max-width: 360px;
+    max-width: 460px;
     width: 100%;
+    animation: fadeUp 0.5s ease-out;
   }
-  .icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #007AFF, #5856D6);
+
+  .logo {
+    width: 88px;
+    height: 88px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 36px;
+    margin: 0 auto 24px;
+    box-shadow: 0 12px 40px rgba(0,122,255,0.3);
   }
+
+  .logo svg {
+    width: 40px;
+    height: 40px;
+    fill: #fff;
+  }
+
   h1 {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: -0.02em;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    margin-bottom: 12px;
+    line-height: 1.15;
+    background: linear-gradient(to right, #fff 40%, rgba(255,255,255,0.7));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-  p {
-    font-size: 15px;
-    color: rgba(255,255,255,0.6);
-    margin-bottom: 28px;
-    line-height: 1.4;
+
+  .tagline {
+    font-size: 17px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 32px;
   }
-  .btn {
+
+  .features {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 36px;
+  }
+
+  .feature {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    color: var(--text-secondary);
+    letter-spacing: 0.01em;
+  }
+
+  .cta {
     display: inline-block;
-    padding: 14px 32px;
-    background: #007AFF;
+    padding: 16px 36px;
+    background: var(--accent);
     color: #fff;
     border-radius: 14px;
     font-size: 17px;
     font-weight: 600;
     text-decoration: none;
-    transition: opacity 0.15s;
+    letter-spacing: -0.01em;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 20px rgba(0,122,255,0.3);
   }
-  .btn:active { opacity: 0.7; }
-  .fallback {
-    margin-top: 16px;
-    font-size: 13px;
-    color: rgba(255,255,255,0.4);
+
+  .cta:hover { opacity: 0.92; }
+  .cta:active { transform: scale(0.97); opacity: 0.85; }
+
+  .footer {
+    position: relative;
+    z-index: 1;
+    margin-top: 48px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.02em;
   }
-  .fallback a { color: rgba(255,255,255,0.6); }
+
+  .footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
 
-<div class="card">
-  <div class="icon">✦</div>
-  <h1>Shared Glyph</h1>
-  <p>Someone shared a glyph widget with you. Tap below to add it to your collection.</p>
-  <a id="open-btn" class="btn" href="#">Open in Glyph</a>
-  <div class="fallback">
-    Don't have the app? <a href="https://apps.apple.com/app/id0000000000">Get Glyph</a>
+<div class="hero">
+  <div class="logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+    </svg>
   </div>
+
+  <h1>Glyph</h1>
+  <p class="tagline">
+    Create beautiful, trackable widget glyphs for your<br>
+    Lock Screen, Home Screen, and Control Center.
+  </p>
+
+  <div class="features">
+    <span class="feature">Lock Screen Widgets</span>
+    <span class="feature">Progress Tracking</span>
+    <span class="feature">Apple Health</span>
+    <span class="feature">Custom Symbols</span>
+    <span class="feature">Share & Import</span>
+  </div>
+
+  <a class="cta" href="https://apps.apple.com/app/id0000000000">Download on the App Store</a>
 </div>
 
-<script>
-(function() {
-  // The payload is in the URL fragment: /share#PAYLOAD
-  var payload = window.location.hash.substring(1);
-  if (!payload) return;
-
-  // Build the custom URL scheme link
-  var appURL = 'glyph://import/' + payload;
-  var btn = document.getElementById('open-btn');
-  btn.href = appURL;
-
-  // Try to decode the payload to show glyph name in the page
-  try {
-    // Convert base64url back to standard base64
-    var b64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-    var pad = b64.length % 4;
-    if (pad) b64 += '==='.substring(0, 4 - pad);
-
-    // Decompress (zlib) — browsers don't have native zlib,
-    // so we use DecompressionStream if available
-    var raw = atob(b64);
-    var bytes = new Uint8Array(raw.length);
-    for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-
-    if (typeof DecompressionStream !== 'undefined') {
-      var ds = new DecompressionStream('deflate');
-      var writer = ds.writable.getWriter();
-      var reader = ds.readable.getReader();
-      var chunks = [];
-
-      reader.read().then(function pump(result) {
-        if (result.done) {
-          var total = chunks.reduce(function(a, c) { return a + c.length; }, 0);
-          var merged = new Uint8Array(total);
-          var offset = 0;
-          chunks.forEach(function(c) { merged.set(c, offset); offset += c.length; });
-          var json = new TextDecoder().decode(merged);
-          var pkg = JSON.parse(json);
-          updateUI(pkg);
-          return;
-        }
-        chunks.push(result.value);
-        return reader.read().then(pump);
-      });
-
-      writer.write(bytes);
-      writer.close();
-    }
-  } catch(e) {
-    // Decoding failed — keep defaults
-  }
-
-  function updateUI(pkg) {
-    if (pkg.glyphs && pkg.glyphs.length > 0) {
-      var name = pkg.glyphs[0].title || 'Shared Glyph';
-      var count = pkg.glyphs.length;
-      document.querySelector('h1').textContent = count > 1
-        ? count + ' Shared Glyphs'
-        : name;
-      if (pkg.homeWidget) {
-        document.querySelector('p').textContent =
-          'Includes ' + count + ' glyph' + (count > 1 ? 's' : '') +
-          ' and a home screen widget. Tap below to import.';
-      } else {
-        document.querySelector('p').textContent =
-          'Tap below to add ' + (count > 1 ? 'these glyphs' : 'this glyph') +
-          ' to your collection.';
-      }
-    }
-  }
-
-  // Auto-redirect on mobile
-  if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-    window.location.href = appURL;
-  }
-})();
-</script>
+<div class="footer">
+  Made by <a href="https://willko.dev">willko studios</a>
+</div>
 
 </body>
 </html>
